@@ -122,7 +122,7 @@
   }
 
   main {
-    @apply w-svw h-svh flex flex-col items-center justify-center;
+    @apply h-svh flex flex-col items-center justify-center;
   }
 
   :root {

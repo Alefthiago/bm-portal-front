@@ -1,9 +1,8 @@
-import Image from "next/image";
-
+//      COMPONENTS.     //
 import { LoginForm } from "@/components/auth/form-login";
 import { FaGoogle } from "react-icons/fa";
 import {
-  
+
 } from "lucide-react"
 import {
   Card,
@@ -14,9 +13,9 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+//     /COMPONENTS.     //
 
-
-export default function Page() {
+export default function loginPage() {
   return (
     <section className={`p-6 sm:w-[500px] w-full`}>
       <Card>
@@ -28,7 +27,9 @@ export default function Page() {
           <LoginForm />
         </CardContent>
         <CardFooter className="flex justify-center">
-          <Button variant="destructive" className={`cursor-pointer`}><FaGoogle /> Entrar com Google</Button>
+          <Button variant="destructive" className={`cursor-pointer`}>
+            <FaGoogle /> Entrar com Google
+          </Button>
         </CardFooter>
       </Card>
     </section >
