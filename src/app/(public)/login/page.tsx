@@ -1,5 +1,5 @@
 //      COMPONENTS.     //
-import { LoginForm } from "@/components/auth/form-login";
+import { LoginForm } from "@/components/forms/form-login";
 import { FaGoogle } from "react-icons/fa";
 import {
 

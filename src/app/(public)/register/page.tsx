@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import { RegisterForm } from "@/components/auth/form-register";
+import { RegisterForm } from "@/components/forms/form-register";
 import { FaGoogle } from "react-icons/fa";
 import {
 
@@ -15,8 +15,7 @@ import {
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
-
-export default function cadastroPage() {
+export default async function cadastroPage() {
   return (
     <section className={`p-6 sm:w-[500px] w-full`}>
       <Card>

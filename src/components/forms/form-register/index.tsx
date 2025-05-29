@@ -1,11 +1,11 @@
 "use client"
 //      UTIL.       //
-import { useAlert } from "@/components/alert-provider";
 import Image from "next/image";
+import { useAlert } from "@/components/alert-provider";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { redirect } from "next/navigation";
 //     /UTIL.       //
 
