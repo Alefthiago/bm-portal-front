@@ -106,8 +106,10 @@ export function RegisterForm() {
             }
 
             const data = await response.json();
-            localStorage.setItem("bmPortalJwt", data.token);
-            redirect("/");
+            showAlert("success", "Operação realizada", data.msg);
+            console.log("Conta criada com sucesso:", data.msg);
+            // localStorage.setItem("bmPortalJwt", data.token);
+            // redirect("/");
         } catch (error) {
             showAlert("error", "Erro inesperado", "Tente novamente mais tarde ou entre em contato com o suporte");
             console.error("Erro ao enviar o formulário:", error);

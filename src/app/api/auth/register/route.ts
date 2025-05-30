@@ -1,7 +1,8 @@
 //      UTILS.      //
 import { NextRequest, NextResponse } from "next/server";
 import { verifyFildsFormRequired } from "@/utils/form";
-import { createUser } from "@/services/authService";
+import AuthService from "@/services/authService";
+import AppResponse from "@/utils/appResponse";
 //     /UTILS.      //
 
 //      CRIAÇÃO DE USUÁRIO.      //
@@ -24,10 +25,18 @@ export async function POST(request: NextRequest) {
             }, { status: 422 });
         }
 
-        let user = await createUser(data);
+        let result: AppResponse = await AuthService.createUser(data);
+        if(!result.status) {
+            return NextResponse.json({
+                msg: result.msg,
+                error: result.error,
+            }, { status: 422 });
+        }
+
         return NextResponse.json({
-            data : user,
-        }, { status: 200 });
+            msg: result.msg,
+            data: result.data,
+        }, { status: 201 });
     } catch (error) {
         return NextResponse.json({
             msg: "Erro inesperado, tente novamente mais tarde ou entre em contato com o suporte",
