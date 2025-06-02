@@ -27,12 +27,12 @@ import Link from "next/link";
 
 //      Validações do form.     //
 const formSchema = z.object({
-    login: z.string().trim().nonempty("Login é obrigatório"),
-    name: z.string().trim().nonempty("Nome completo é obrigatório"),
+    login: z.string().trim().min(5).nonempty("Login é obrigatório"),
+    name: z.string().trim().min(5).nonempty("Nome completo é obrigatório"),
     email: z.string().trim().email("E-mail inválido").nonempty("E-mail é obrigatório"),
-    passwordConfirm: z.string().nonempty("Confirmação de senha é obrigatória"),
-    password: z.string().nonempty("Senha é obrigatória")
-})
+    passwordConfirm: z.string().min(6).nonempty("Confirmação de senha é obrigatória"),
+    password: z.string().min(5).nonempty("Senha é obrigatória")
+});
 //     /Validações do form.     //
 
 export function RegisterForm() {

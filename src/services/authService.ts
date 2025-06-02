@@ -13,19 +13,25 @@ export default class AuthService {
             const emailExists: AppResponse = await UserModel.verifyEmailExist(email);
             if (!emailExists.status) return emailExists;
             if (emailExists.data) {
-                return AppResponse.error("Email já está em uso", "Email duplicado");
+                return AppResponse.error("E-mail inválido", "Email duplicado");
             }
 
             const loginExists = await UserModel.verifyLoginExist(login);
             if (!loginExists.status) return loginExists;
             if (loginExists.data) {
-                return AppResponse.error("Login já está em uso", "Login duplicado");
+                return AppResponse.error("Login inválido", "Login duplicado");
             }
             //     /VALIDAÇÕES BAsICAS.      //
 
             const userCreated: AppResponse = await UserModel.create(data);
+            if(!userCreated.status) {
+                return AppResponse.error(
+                    userCreated.msg,
+                    `AuthService/createUser: ${userCreated.error}`
+                );
+            }
 
-            return AppResponse.success("Usuário criado");
+            return AppResponse.success("Usuário criado", userCreated.data);
         } catch (error) {
             return AppResponse.error(
                 "Erro ao criar usuário",
@@ -33,4 +39,7 @@ export default class AuthService {
             );
         }
     }
+
+    // static async generateJwt(userId: string, ): Promise<AppResponse> {
+    // }
 }
