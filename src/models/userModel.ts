@@ -5,16 +5,17 @@ import { encrypt } from "@/utils/crypto";
 //     /UTIL.       //
 
 export default class UserModel {
-    static async create(data: FormData): Promise<AppResponse> {
+    static async create(data: Record<string, string>): Promise<AppResponse> {
         try {
-            let passwordHashed = encrypt(data.get("password") as string);
+            const passwordHashed = encrypt(data.password);
             const user = await prisma.user.create({
                 data: {
-                    login: (data.get("login") as string).trim().toLowerCase(),
-                    name: (data.get("name") as string).trim().toLowerCase(),
-                    email: (data.get("email") as string).trim().toLowerCase(),
-                    password: passwordHashed.encryptedData
-                },
+                    login: data.login.trim().toLowerCase() as string,
+                    name: data.name.trim().toLowerCase() as string,
+                    email: data.email.trim().toLowerCase() as string,
+                    password: passwordHashed.encryptedData as string,
+                    iv: passwordHashed.iv as string,
+                }
             });
 
             return AppResponse.success("Usuário criado com sucesso", user);
@@ -54,6 +55,25 @@ export default class UserModel {
             return AppResponse.error(
                 "Erro ao verificar email",
                 `UserModel/verifyEmailExist: ${error instanceof Error ? error.message : "Erro desconhecido"}`
+            );
+        }
+    }
+
+    static async getUserByLogin(login: string): Promise<AppResponse> {
+        try {
+            const user = await prisma.user.findFirst({
+                where: { login }
+            });
+
+            if (!user) {
+                return AppResponse.error("Usuário não encontrado", "UserModel/getUserByLogin: Usuário não existe");
+            }
+
+            return AppResponse.success("Usuário encontrado", user);
+        } catch (error) {
+            return AppResponse.error(
+                "Erro ao buscar usuário",
+                `UserModel/getUserByLogin: ${error instanceof Error ? error.message : "Erro desconhecido"}`
             );
         }
     }

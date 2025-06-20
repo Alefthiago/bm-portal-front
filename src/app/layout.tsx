@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 //      META.       //
 export const metadata: Metadata = {
     title: 'BM Portal',
-    description: 'Descrição do seu portal',
+    // description: 'Portal de para auxilar',
 };
 //     /META.       //
 
@@ -36,8 +36,7 @@ export default function RootLayout({
             <body>
                 <ThemeProvider
                     attribute="class"
-                    defaultTheme="dark"
-                    enableSystem
+                    defaultTheme="system"
                     disableTransitionOnChange
                 >
                     <div className={`${geistSans.variable} ${geistMono.variable} font-sans`}>

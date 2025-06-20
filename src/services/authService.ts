@@ -1,15 +1,16 @@
 //      UTIL.      //
 import UserModel from "@/models/userModel";
 import AppResponse from "@/utils/appResponse";
+import App from "next/app";
 //     /UTIL.      //
 
 export default class AuthService {
-    static async createUser(data: FormData): Promise<AppResponse> {
+    static async createUser(data: Record<string, string>): Promise<AppResponse> {
         try {
-            const email = data.get("email") as string;
-            const login = data.get("login") as string;
+            const email: string = data.email.trim().toLowerCase();
+            const login: string = data.login.trim().toLowerCase();
 
-            //      VALIDAÇÕES BAsICAS.      //
+            //      VALIDAÇÕES BASICAS.      //
             const emailExists: AppResponse = await UserModel.verifyEmailExist(email);
             if (!emailExists.status) return emailExists;
             if (emailExists.data) {
@@ -21,13 +22,13 @@ export default class AuthService {
             if (loginExists.data) {
                 return AppResponse.error("Login inválido", "Login duplicado");
             }
-            //     /VALIDAÇÕES BAsICAS.      //
+            //     /VALIDAÇÕES BASICAS.      //
 
             const userCreated: AppResponse = await UserModel.create(data);
-            if(!userCreated.status) {
+            if (!userCreated.status) {
                 return AppResponse.error(
                     userCreated.msg,
-                    `AuthService/createUser: ${userCreated.error}`
+                    userCreated.error as string
                 );
             }
 
@@ -39,7 +40,4 @@ export default class AuthService {
             );
         }
     }
-
-    // static async generateJwt(userId: string, ): Promise<AppResponse> {
-    // }
 }

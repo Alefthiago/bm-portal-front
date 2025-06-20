@@ -55,7 +55,9 @@ export function AlertProvider({ children }: { children: React.ReactNode }) {
                 >
                     <AlertDialogHeader>
                         <AlertDialogTitle>{title}</AlertDialogTitle>
-                        <AlertDialogDescription>{description}</AlertDialogDescription>
+                        <AlertDialogDescription
+                            dangerouslySetInnerHTML={{ __html: description }}
+                        />
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Fechar</AlertDialogCancel>

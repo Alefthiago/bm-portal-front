@@ -4,17 +4,17 @@ import * as React from "react"
 import {
   BookOpen,
   Bot,
-  Frame,
-  Map,
-  PieChart,
   Settings2,
   PlusCircleIcon,
 } from "lucide-react"
 
 import { NavMain } from "@/components/sidebar/nav-main"
+import { NavMainContact } from "@/components/sidebar/nav-main-contact"
 import { NavProjects } from "@/components/sidebar/nav-projects"
 import { NavUser } from "@/components/sidebar/nav-user"
 import { TeamSwitcher } from "@/components/sidebar/team-switcher"
+import { ModeToggle } from "@/components/mode-toggle";
+
 import {
   Sidebar,
   SidebarContent,
@@ -23,10 +23,9 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-// This is sample data.
 const data = {
   user: {
-    name: "shadcn",
+    name: "alef thiago silva",
     email: "m@example.com",
     avatar: "/avatars/shadcn.jpg",
   },
@@ -115,40 +114,25 @@ const data = {
         },
       ],
     },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
+  ]
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar() {
   return (
-    <Sidebar {...props}>
+    <Sidebar>
       <SidebarHeader>
+        <ModeToggle />
         <TeamSwitcher />
       </SidebarHeader>
 
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavMain />
+        <NavMainContact />
+        <NavProjects />
       </SidebarContent>
 
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

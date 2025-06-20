@@ -17,21 +17,24 @@ import { Button } from "@/components/ui/button"
 
 export default function loginPage() {
   return (
-    <section className={`p-6 sm:w-[500px] w-full`}>
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle>Bm Portal</CardTitle>
-          <CardDescription>Realize o login</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <LoginForm />
-        </CardContent>
-        <CardFooter className="flex justify-center">
-          <Button variant="destructive" className={`cursor-pointer`}>
-            <FaGoogle /> Entrar com Google
-          </Button>
-        </CardFooter>
-      </Card>
-    </section >
+    <section>
+      <LoginForm />
+    </section>
+    // <section className={`p-6 sm:w-[500px] w-full`}>
+    //   <Card>
+    //     <CardHeader className="text-center">
+    //       <CardTitle>Bm Portal</CardTitle>
+    //       <CardDescription>Realize o login</CardDescription>
+    //     </CardHeader>
+    //     <CardContent>
+    //       <LoginForm />
+    //     </CardContent>
+    //     <CardFooter className="flex justify-center">
+    //       <Button variant="destructive" className={`cursor-pointer`}>
+    //         <FaGoogle /> Entrar com Google
+    //       </Button>
+    //     </CardFooter>
+    //   </Card>
+    // </section >
   );
 }

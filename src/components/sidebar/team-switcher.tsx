@@ -1,12 +1,5 @@
-"use client"
-
 import * as React from "react"
-
 import Image from "next/image"
-import { useEffect, useState } from "react"
-import { useTheme } from "next-themes";
-import { Skeleton } from "@/components/ui/skeleton"
-
 import {
   SidebarMenu,
   SidebarMenuButton,
