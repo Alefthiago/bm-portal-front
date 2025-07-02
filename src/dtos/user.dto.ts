@@ -26,7 +26,13 @@ export const RegisterUserDTO = z.object({
         required_error: "Senha é obrigatório"
     })
         .nonempty("Senha é obrigatória")
-        .min(6, "Senha deve conter pelo menos 6 caracteres")
+        .min(6, "Senha deve conter pelo menos 6 caracteres"),
+    phone: z.string({
+        required_error: "WhatsApp é obrigatório"
+    })
+        .trim()
+        .nonempty("WhatsApp é obrigatório")
+        .min(14, "WhatsApp deve conter pelo menos 10 números")
 });
 export type RegisterUserDTOType = z.infer<typeof RegisterUserDTO>;
 //     /VALIDAÇÃO DE DADOS DO USUÁRIO PARA REGISTRO.        //

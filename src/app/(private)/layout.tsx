@@ -6,10 +6,10 @@ import { SessionProvider } from "next-auth/react";
 
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { Toaster } from "@/components/ui/sonner";
+import Footer from "@/components/footer/footer";
 
 export const metadata: Metadata = {
   title: 'BM Portal',
-  // description: 'Portal de para auxilar',
 };
 
 export default function AppLayout({
@@ -27,6 +27,7 @@ export default function AppLayout({
               <CustomTrigger />
             </div>
             {children}
+            <Footer />
             <Toaster richColors closeButton />
           </section>
         </SidebarProvider>

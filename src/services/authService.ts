@@ -1,7 +1,6 @@
 //      UTIL.      //
 import UserModel from "@/models/userModel";
 import AppResponse from "@/utils/appResponse";
-import App from "next/app";
 //     /UTIL.      //
 
 export default class AuthService {

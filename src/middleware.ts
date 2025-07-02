@@ -1,37 +1,35 @@
 import { MiddlewareConfig, NextRequest, NextResponse } from "next/server";
-// import { auth } from "@/lib/auth";
 
-const rotasPublicas: Array<{ path: string; whenAuth: string; }> = [
+const publicRoutes: Array<{ path: string; whenAuth: string; }> = [
     { path: '/login', whenAuth: 'redirect' },
     { path: '/register', whenAuth: 'redirect' }
 ] as const;
 
-const ROTA_LOGIN: string = '/login';
+const ROUTE_LOGIN: string = '/login';
 
-export async function middleware(request: NextRequest) {
-    const caminhoAtual: string = request.nextUrl.pathname;
-    const rotaPublica = rotasPublicas.find(rota => rota.path == caminhoAtual);
-    // const session = await auth();
+export function middleware(request: NextRequest) {
+    const pathCurrent: string = request.nextUrl.pathname;
+    const publicRoute = publicRoutes.find(route => route.path == pathCurrent);
     const session = request.cookies.get('authjs.session-token')?.value;
 
-    if (!session && rotaPublica) {
+    if (!session && publicRoute) {
         return NextResponse.next();
     }
 
-    if (!session && !rotaPublica) {
+    if (!session && !publicRoute) {
         let redirect = request.nextUrl.clone();
-        redirect.pathname = ROTA_LOGIN;
+        redirect.pathname = ROUTE_LOGIN;
         return NextResponse.redirect(redirect);
     }
 
-    if (session && rotaPublica && rotaPublica.whenAuth === 'redirect') {
+    if (session && publicRoute && publicRoute.whenAuth === 'redirect') {
         let redirect = request.nextUrl.clone();
         redirect.pathname = '/';
 
         return NextResponse.redirect(redirect);
     }
 
-    if (session && !rotaPublica) {
+    if (session && !publicRoute) {
         return NextResponse.next();
     }
 
@@ -48,6 +46,5 @@ export const config: MiddlewareConfig = {
         * - favicon.ico, sitemap.xml, robots.txt (metadata files)
         */
         '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|bm.svg).*)',
-        //    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
     ],
 }

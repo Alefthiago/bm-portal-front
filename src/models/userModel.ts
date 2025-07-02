@@ -13,8 +13,9 @@ export default class UserModel {
                     login: data.login.trim().toLowerCase() as string,
                     name: data.name.trim().toLowerCase() as string,
                     email: data.email.trim().toLowerCase() as string,
+                    phone: data.phone.replace(/\D/g, "") as string,
                     password: passwordHashed.encryptedData as string,
-                    iv: passwordHashed.iv as string,
+                    iv: passwordHashed.iv as string
                 }
             });
 

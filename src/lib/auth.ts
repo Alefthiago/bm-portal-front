@@ -21,10 +21,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (passwordDecrypted !== credentials.password) return null;
 
       return {
-        id: user.data.id,
+        id: user.data.role, // Tipo do usuário é passado como ID
         name: user.data.name,
         email: user.data.email,
-        role: user.data.role
       };
     }
   })],
@@ -32,14 +31,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id as string;
-        // token.role = user.role as string;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id as string;
-        // session.user.role = token.role as string;
       }
       return session;
     }

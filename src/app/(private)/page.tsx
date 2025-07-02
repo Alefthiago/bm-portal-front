@@ -1,53 +1,50 @@
+"use client";
+
+import MostViewed from "@/components/cards/most-viewed";
 import {
   Card,
   CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
 
 const cardData = {
-  title: "Continue assistindo",
-  description: "Titutlo do card",
+  title: "Título do Card",
+  description: "Continue assistindo",
   action: "Card Action",
-  content: "Card Content",
-  footer: "Card Footer",
 };
 
 export default function Page() {
   return (
     <section className="flex flex-col gap-4">
-      <Card className="">
+      <Card>
         <CardHeader>
           <CardTitle>{cardData.title}</CardTitle>
           <CardDescription>{cardData.description}</CardDescription>
           <CardAction>{cardData.action}</CardAction>
         </CardHeader>
-        <CardContent>
-          <p>{cardData.content}</p>
-        </CardContent>
-        <CardFooter>
-          <p>{cardData.footer}</p>
-        </CardFooter>
       </Card>
 
-      <Card className="h-svh">
+      <Card className="min-h-[100lvh]">
         <CardHeader>
-          <CardTitle>Mais Vistos</CardTitle>
+          <CardTitle>
+            <h1 className="text-2xl font-semibold text-gray-800 capitalize lg:text-3xl dark:text-white">
+              Mais populares
+            </h1>
+          </CardTitle>
           <CardDescription>
-            Descubra os conteúdos mais populares entre os usuários
+            <p>
+              Descubra os conteúdos mais populares entre os usuários
+            </p>
           </CardDescription>
-          {/* <CardAction>{cardData.action}</CardAction> */}
         </CardHeader>
+        
         <CardContent>
-          <p>{cardData.content}</p>
+          <MostViewed />
         </CardContent>
-        <CardFooter>
-          <p>{cardData.footer}</p>
-        </CardFooter>
       </Card>
-    </section>
+    </section >
   );
 }

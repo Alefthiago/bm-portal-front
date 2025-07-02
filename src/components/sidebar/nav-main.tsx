@@ -1,3 +1,4 @@
+//      UTILS.      //
 import {
     ChevronRight,
     BookA,
@@ -19,8 +20,8 @@ import {
     SidebarMenuSub,
     SidebarMenuSubButton,
     SidebarMenuSubItem,
-    useSidebar,
 } from "@/components/ui/sidebar";
+//     /UTILS.      //
 
 const items = [
     {
@@ -95,7 +96,6 @@ const items = [
 ]
 
 export function NavMain() {
-    const { isMobile } = useSidebar();
     return (
         <SidebarGroup>
             <SidebarGroupLabel>
@@ -136,4 +136,4 @@ export function NavMain() {
             </SidebarMenu>
         </SidebarGroup>
     )
-}
+};

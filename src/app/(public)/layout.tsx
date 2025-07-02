@@ -3,14 +3,15 @@ import type { Metadata } from "next";
 //     /UTIL.       //
 
 //      COMPONENTS.     //
-import { Facebook, Linkedin, Instagram, Copyright, Loader2, Send } from "lucide-react";
+import { Copyright } from "lucide-react";
+import SocialMedia from "@/components/ui/social-media";
 import { ModeToggle } from "@/components/mode-toggle";
 //     /COMPONENTS.     //
 
 //      META.       //
 export const metadata: Metadata = {
     title: 'BM Portal',
-    description: 'Manual do usuário do BM Portal',
+    description: 'Manual do usuário, sistemas e informações sobre a BM Informática',
 };
 //     /META.       //
 
@@ -24,34 +25,9 @@ export default function AuthLayout({
             <section className="w-full max-w-sm md:max-w-3xl mt-8">
                 {children}
                 <div className="text-muted-foreground text-center text-xs text-balance mt-4">
-                    <ModeToggle/>
-                    <div className="flex justify-center items-center gap-4 mb-2 mt-4">
-                        <a
-                            href="https://br.linkedin.com/company/bm-inform-tica-ltda"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-primary underline underline-offset-4"
-                        >
-                            <Linkedin className="w-4 h-4" />
-                        </a>
-                        <a
-                            href="https://www.instagram.com/bminformaticaoficial/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-primary underline underline-offset-4"
-                        >
-                            <Instagram className="w-4 h-4" />
-                        </a>
-                        <a
-                            href="https://www.facebook.com/bminformaticaoficial/?_rdr"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hover:text-primary underline underline-offset-4"
-                        >
-                            <Facebook className="w-4 h-4" />
-                        </a>
-                    </div>
-                    <div className="hover:underline cursor-pointer">
+                    <ModeToggle />
+                    <SocialMedia />
+                    <div className="hover:underline cursor-pointer mt-2">
                         <Copyright className="inline w-4 h-4 mr-1" />
                         2025 BM Informática Ltda
                     </div>

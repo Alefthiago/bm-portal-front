@@ -7,18 +7,78 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider     = "sqlite"
+  url          = env("DATABASE_URL")
+  // relationMode = "prisma" // cria apenas a fk em nivel de aplicação
+  relationMode = "foreignKeys" // cria a fk no banco de dados
 }
 
 model user {
-  id        Int   @id @default(autoincrement())
-  email     String   @unique
-  name      String
-  login     String   @unique
-  password  String
-  iv        String
-  role      String   @default("user")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  uf          String?   
+
+  phone       String   @unique
+  cnpj        String?  
+
+  name        String
+  login       String   @unique
+  password    String
+  
+  confirmPend Boolean  @default(true)
+
+  iv          String
+  role        String    @default("user")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  deletedBy   Int?
+}
+
+model navMain {
+  id    Int     @id @default(autoincrement())
+  title String
+  icon  String?
+  url   String?
+
+  navSubs navSub[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model navSub {
+  id    Int     @id @default(autoincrement())
+  title String
+  icon  String?
+  url   String?
+
+  navMainId Int
+  navMain   navMain @relation(fields: [navMainId], references: [id])
+
+  parentId Int?
+  parent   navSub?  @relation("SubSubRelation", fields: [parentId], references: [id])
+  children navSub[] @relation("SubSubRelation")
+
+  posts      post[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model post {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String?
+  url         String?
+  image       String?
+
+  navSubId Int
+  navSub   navSub @relation(fields: [navSubId], references: [id])
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 }
