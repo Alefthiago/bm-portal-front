@@ -18,7 +18,13 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import Image from "next/image"
-import { Loader2, Send } from "lucide-react";
+import {
+    Loader2,
+    Send,
+    XCircle,
+    CheckCircle,
+    CirclePlus
+} from "lucide-react";
 import { z } from "zod";
 import { signIn } from "next-auth/react";
 import { useAlert } from "@/components/alert-provider";
@@ -55,10 +61,9 @@ const formSchema = z.object({
     })
         .trim()
         .nonempty("WhatsApp é obrigatório")
-        .min(14, "WhatsApp deve conter pelo menos 10 números")
+        .min(13, "WhatsApp deve conter pelo menos 10 números")
 });
 //     /Validações do form.     //
-
 
 export function RegisterForm({
     className,
@@ -67,6 +72,10 @@ export function RegisterForm({
     const router = useRouter();
     const { showAlert } = useAlert();
     const [isLoadingBtn, setIsLoadingBtn] = useState<boolean>(false);
+
+    const [isLoadingBtnPhone, setIsLoadingBtnPhone] = useState<boolean>(false);
+    const [phoneIsValid, setPhoneIsValid] = useState<boolean>(false);
+    const [numberConfirmed, setNumberConfirmed] = useState<string>("");
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -77,9 +86,63 @@ export function RegisterForm({
             phone: "",
             password: "",
         },
-    })
+    });
+
 
     //      EVENTOS.     //
+    const handlePhoneValidation = async () => {
+        setIsLoadingBtnPhone(true);
+        let phone: string = form.getValues("phone").replace(/\D/g, "");
+
+        if (phone.length < 10) {
+            showAlert("error", "Número de telefone inválido", "O número de telefone deve conter pelo menos 10 números");
+            setIsLoadingBtnPhone(false);
+            return;
+        }
+
+        if (phone === numberConfirmed) {
+            showAlert("info", "Número já confirmado", "O número de telefone já foi confirmado");
+            setIsLoadingBtnPhone(false);
+            return;
+        }
+
+        try {
+            const params = new URLSearchParams({ phone });
+            let response = await fetch(`/api/auth/confirmPhone?${params.toString()}`, {
+                method: "GET"
+            });
+
+            if (!response.ok) {
+                let contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                    let errorData = await response.json();
+                    console.error("Erro ao criar conta:", errorData.error);
+                    if (errorData.issues) {
+                        let issues = errorData.issues.map((issue: any) => issue.message).join("<br/>");
+                        showAlert("error", "Não foi possível concluir a ação", issues);
+                    } else {
+                        showAlert("error", "Não foi possível concluir a ação", errorData.msg);
+                    }
+                } else {
+                    let errorText = await response.text();
+                    console.error("Erro ao criar conta:", errorText);
+                    showAlert("error", "Erro inesperado", "Tente novamente mais tarde ou entre em contato com o suporte");
+                }
+                setIsLoadingBtn(false);
+                return;
+            }
+
+            let data = await response.json();
+            setNumberConfirmed(phone);
+            setPhoneIsValid(true);
+            setIsLoadingBtnPhone(false);
+        } catch (error) {
+            console.error("Erro ao enviar o formulário:", error);
+            showAlert("error", "Erro inesperado", "Tente novamente mais tarde ou entre em contato com o suporte");
+            setIsLoadingBtnPhone(false);
+        }
+    };
+
     const handleLoginBlur = async (
         e: React.FocusEvent<HTMLInputElement>,
         originalOnBlur: (...event: any[]) => void
@@ -95,9 +158,16 @@ export function RegisterForm({
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoadingBtn(true);
-        values.login = values.login.trim().toLowerCase();
-        values.name = values.name.trim().toLowerCase();
-        values.email = values.email.trim().toLowerCase();
+
+        if (!phoneIsValid || !numberConfirmed || values.phone.replace(/\D/g, "") !== numberConfirmed) {
+            showAlert("error", "Número de telefone inválido", "Por favor, valide o número de telefone antes de prosseguir");
+            setIsLoadingBtn(false);
+            return;
+        }
+
+        values.login = values.login.toLowerCase();
+        values.name = values.name.toLowerCase();
+        values.email = values.email.toLowerCase();
 
         let formData: FormData = new FormData();
         formData.append("login", values.login);
@@ -214,30 +284,49 @@ export function RegisterForm({
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>WhatsApp</FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        maxLength={15}
-                                                        autoComplete="off" placeholder="(00) 00000-0000"
-                                                        {...field}
-                                                        onBlur={(e) => handleLoginBlur(e, field.onBlur)}
-                                                        onChange={(e) => {
-                                                            let raw = e.target.value.replace(/\D/g, "");
-                                                            let formatted = raw;
+                                                <div className="flex items-center gap-2 md:flex-row flex-col">
+                                                    <FormControl className="md:w-4/5">
+                                                        <Input
+                                                            maxLength={14}
+                                                            autoComplete="off" placeholder="(00) 0000-0000"
+                                                            {...field}
+                                                            onBlur={(e) => handleLoginBlur(e, field.onBlur)}
+                                                            onChange={(e) => {
+                                                                let raw = e.target.value.replace(/\D/g, "");
+                                                                let formatted = raw;
 
-                                                            if (raw.length === 11) {
-                                                                formatted = `(${raw.slice(0, 2)}) ${raw.slice(2, 7)}-${raw.slice(7)}`;
-                                                            } else if (raw.length === 10) {
-                                                                formatted = `(${raw.slice(0, 2)}) ${raw.slice(2, 6)}-${raw.slice(6)}`;
-                                                            }
+                                                                if (raw.length === 10) {
+                                                                    formatted = `(${raw.slice(0, 2)}) ${raw.slice(2, 6)}-${raw.slice(6)}`;
+                                                                }
 
-                                                            field.onChange(formatted);
-                                                        }}
-                                                    />
-                                                </FormControl>
+                                                                formatted.replace(/\D/g, "") !== numberConfirmed ? setPhoneIsValid(false) : setPhoneIsValid(true);
+                                                                field.onChange(formatted);
+                                                            }}
+                                                        />
+                                                    </FormControl>
+                                                    <Button
+                                                        type="button"
+                                                        className="w-full md:w-auto cursor-pointer"
+                                                        disabled={isLoadingBtnPhone}
+                                                        onClick={handlePhoneValidation}
+                                                    >
+                                                        {isLoadingBtnPhone ? (
+                                                            <Loader2 className="animate-spin" />
+                                                        ) : (
+                                                            phoneIsValid ? (
+                                                                <CheckCircle />
+                                                            ) : (
+                                                                <CirclePlus />
+                                                            )
+                                                        )}
+                                                        Validar
+                                                    </Button>
+                                                </div>
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
+
                                 </div>
                                 <div className="grid gap-3">
                                     <FormField

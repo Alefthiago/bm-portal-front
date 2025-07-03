@@ -32,7 +32,6 @@ export async function POST(request: NextRequest) {
         }
 
         const genetedTokenConfirmAccount: string = Math.floor(Math.random() * 0x10000).toString(16).padStart(4, '0');
-
         return NextResponse.json({
             msg: createdUser.msg,
             data: {

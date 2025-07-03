@@ -32,7 +32,7 @@ export const RegisterUserDTO = z.object({
     })
         .trim()
         .nonempty("WhatsApp é obrigatório")
-        .min(14, "WhatsApp deve conter pelo menos 10 números")
+        .min(13, "WhatsApp deve conter pelo menos 10 números")
 });
 export type RegisterUserDTOType = z.infer<typeof RegisterUserDTO>;
 //     /VALIDAÇÃO DE DADOS DO USUÁRIO PARA REGISTRO.        //
