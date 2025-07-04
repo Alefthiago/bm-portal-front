@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { formDataToObject } from "@/utils/form";
 import AuthService from "@/services/authService";
 import AppResponse from "@/utils/appResponse";
-import { RegisterUserDTO } from "@/dtos/user.dto";
+// import { RegisterUserDTO } from "@/dtos/user.dto";
 //     /UTILS.      //
 
 //      CRIAÇÃO DE USUÁRIO.      //
@@ -13,14 +13,14 @@ export async function POST(request: NextRequest) {
         const data: Record<string, string> = formDataToObject(formData);
 
         //      Validação dos dados recebidos.      //
-        const parse = RegisterUserDTO.safeParse(data);
-        if (!parse.success) {
-            return NextResponse.json({
-                msg: "Dados inválidos",
-                error: "Api/auth/register: Dados não correspondem ao formato esperado",
-                issues: parse.error.issues,
-            }, { status: 422 });
-        }
+        // const parse = RegisterUserDTO.safeParse(data);
+        // if (!parse.success) {
+        //     return NextResponse.json({
+        //         msg: "Dados inválidos",
+        //         error: "Api/auth/register: Dados não correspondem ao formato esperado",
+        //         issues: parse.error.issues,
+        //     }, { status: 422 });
+        // }
         //     /Validação dos dados recebidos.      //
 
         const createdUser: AppResponse = await AuthService.createUser(data);

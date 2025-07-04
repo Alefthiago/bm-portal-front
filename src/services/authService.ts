@@ -1,59 +1,106 @@
+const apiUrlGeneteToken = process.env.API_URL_GENETE_TOKEN;
+const apiUrlValidateToken = process.env.API_URL_VALIDATE_TOKEN;
+if (!apiUrlGeneteToken || !apiUrlValidateToken) {
+    throw new Error("Variáveis de ambiente não estão definidas");
+}
+
 //      UTIL.      //
-import UserModel from "@/models/userModel";
 import AppResponse from "@/utils/appResponse";
 //     /UTIL.      //
 
 export default class AuthService {
-    static async createUser(data: Record<string, string>): Promise<AppResponse> {
+    static async generateAccessToken(formData: FormData): Promise<AppResponse> {
         try {
-            const email: string = data.email.trim().toLowerCase();
-            const login: string = data.login.trim().toLowerCase();
+            const geneteAccessToken = await fetch(apiUrlGeneteToken as string, {
+                method: "POST",
+                body: formData,
+            });
 
-            //      VALIDAÇÕES BASICAS.      //
-            const emailExists: AppResponse = await UserModel.verifyEmailExist(email);
-            if (!emailExists.status) return emailExists;
-            if (emailExists.data) {
-                return AppResponse.error("E-mail inválido", "Email duplicado");
-            }
+            if (!geneteAccessToken.ok) {
+                let contentType = geneteAccessToken.headers.get("content-type");
+                let error: string;
 
-            const loginExists = await UserModel.verifyLoginExist(login);
-            if (!loginExists.status) return loginExists;
-            if (loginExists.data) {
-                return AppResponse.error("Login inválido", "Login duplicado");
-            }
-            //     /VALIDAÇÕES BASICAS.      //
+                if (contentType && contentType.includes("application/json")) {
+                    let errorData = await geneteAccessToken.json();
+                    error = errorData.error || "Erro desconhecido";
+                    console.error("Erro ao criar conta:", errorData.error);
+                } else {
+                    let errorText = await geneteAccessToken.text();
+                    error = errorText || "Erro desconhecido";
+                    console.error("Erro ao criar conta:", errorText);
+                }
 
-            const userCreated: AppResponse = await UserModel.create(data);
-            if (!userCreated.status) {
                 return AppResponse.error(
-                    userCreated.msg,
-                    userCreated.error as string
+                    "Erro ao gerar token de acesso",
+                    `AuthService/generateAccessToken: ${error}`
                 );
             }
 
-            return AppResponse.success("Usuário criado", userCreated.data);
+            const responseData = await geneteAccessToken.json();
+            if (!responseData || !responseData.success) {
+                return AppResponse.error(
+                    responseData?.message || "Resposta inválida da API de geração de token",
+                    `AuthService/generateAccessToken: Resposta inválida da API de geração de token`
+                );
+            }
+
+            return AppResponse.success("Token gerado com sucesso");
         } catch (error) {
             return AppResponse.error(
-                "Erro ao criar usuário",
-                `AuthService/createUser: ${error instanceof Error ? error.message : "Erro desconhecido"}`
+                "Erro ao gerar token de acesso",
+                `AuthService/generateAccessToken: ${error instanceof Error ? error.message : "Erro desconhecido"}`
             );
         }
     }
 
-    static async confirmPhone(phone: string): Promise<AppResponse> {
+    static async validateAccessToken(token: string, phone: string, document: string): Promise<AppResponse> {
         try {
-            //      Validação do número de telefone.      //
-            if (!phone || typeof phone !== 'string' || !/^\d{10,15}$/.test(phone)) {
-                return AppResponse.error("Número de telefone inválido", "Número de telefone não corresponde ao formato esperado");
-            }
-            //     /Validação do número de telefone.      //
+            const validateAccessToken = await fetch(apiUrlValidateToken as string, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    token,
+                    phone: phone.replace(/\D/g, ""),
+                    cnpj: document.replace(/\D/g, ""),
+                }),
+            });
 
-            const genetedTokenConfirmPhone: string = Math.floor(Math.random() * 0x10000).toString(16).padStart(4, '0');
-            return AppResponse.success("Token gerado com sucesso", { tokenConfirmPhone: genetedTokenConfirmPhone });
+            if (!validateAccessToken.ok) {
+                let contentType = validateAccessToken.headers.get("content-type");
+                let error: string;
+
+                if (contentType && contentType.includes("application/json")) {
+                    let errorData = await validateAccessToken.json();
+                    error = errorData.error || "Erro desconhecido";
+                    console.error("Erro ao validar token:", errorData.error);
+                } else {
+                    let errorText = await validateAccessToken.text();
+                    error = errorText || "Erro desconhecido";
+                    console.error("Erro ao validar token:", errorText);
+                }
+
+                return AppResponse.error(
+                    "Erro ao validar token de acesso",
+                    `AuthService/validateAccessToken: ${error}`
+                );
+            }
+
+            const responseData = await validateAccessToken.json();
+            console.log("Resposta da API de validação de token:", responseData);
+            if (!responseData || !responseData.status) {
+                return AppResponse.error(
+                    responseData?.message || "Resposta inválida da API de validação de token",
+                    `AuthService/validateAccessToken: Resposta inválida da API de validação de token`
+                );
+            }
+
+            return AppResponse.success("Token validado com sucesso");
         } catch (error) {
             return AppResponse.error(
-                "Erro ao gerar token de confirmação de telefone",
-                `AuthService/confirmPhone: ${error instanceof Error ? error.message : "Erro desconhecido"}`
+                "Erro ao validar token de acesso",
+                `AuthService/validateAccessToken: ${error instanceof Error ? error.message : "Erro desconhecido"}`
             );
         }
     }
