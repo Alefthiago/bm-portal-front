@@ -1,30 +1,34 @@
 //    UTIL.   //
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import UserModel from "@/models/userModel";
-import { decrypt } from "@/utils/crypto";
+// import UserModel from "@/models/userModel";
+// import { decrypt } from "@/utils/crypto";
 //   /UTIL.   //
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [Credentials({
     credentials: {
-      login: {},
-      password: {}
+      // login: {},
+      // password: {}
+      phone: {},
+      document: {}
     },
     authorize: async (credentials) => {
-      if (!credentials?.login || !credentials?.password) return null;
-
-      const user = await UserModel.getUserByLogin(credentials.login as string);
-      if (!user) return null;
-
-      const passwordDecrypted = decrypt(user.data.password, user.data.iv);
-      if (passwordDecrypted !== credentials.password) return null;
-
+      if (!credentials?.phone || !credentials?.document) return null;
       return {
-        id: user.data.role, // Tipo do usuário é passado como ID
-        name: user.data.name,
-        email: user.data.email,
-      };
+        id: credentials.phone as string,
+        document: credentials.document as string
+      }
+      // if (!credentials?.login || !credentials?.password) return null;
+      // const user = await UserModel.getUserByLogin(credentials.login as string);
+      // if (!user) return null;
+      // const passwordDecrypted = decrypt(user.data.password, user.data.iv);
+      // if (passwordDecrypted !== credentials.password) return null;
+      // return {
+      //   id: user.data.role, // Tipo do usuário é passado como ID
+      //   name: user.data.name,
+      //   email: user.data.email,
+      // };
     }
   })],
   callbacks: {

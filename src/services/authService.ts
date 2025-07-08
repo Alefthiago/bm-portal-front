@@ -1,11 +1,16 @@
 const apiUrlGeneteToken = process.env.API_URL_GENETE_TOKEN;
 const apiUrlValidateToken = process.env.API_URL_VALIDATE_TOKEN;
-if (!apiUrlGeneteToken || !apiUrlValidateToken) {
+const loginMaster = process.env.LOGIN_MASTER;
+const passwordMaster = process.env.PASSWORD_MASTER;
+const ivMaster = process.env.IV_MASTER;
+if (!apiUrlGeneteToken || !apiUrlValidateToken || !loginMaster || !passwordMaster || !ivMaster) {
     throw new Error("Variáveis de ambiente não estão definidas");
 }
 
 //      UTIL.      //
+import UserModel from "@/models/userModel";
 import AppResponse from "@/utils/appResponse";
+import { decrypt } from "@/utils/crypto";
 //     /UTIL.      //
 
 export default class AuthService {
@@ -101,6 +106,71 @@ export default class AuthService {
             return AppResponse.error(
                 "Erro ao validar token de acesso",
                 `AuthService/validateAccessToken: ${error instanceof Error ? error.message : "Erro desconhecido"}`
+            );
+        }
+    }
+
+    static async LoginSupport(data: Record<string, string>): Promise<AppResponse> {
+        try {
+            if (!data.login || !data.password) {
+                return AppResponse.error(
+                    "Login e senha são obrigatórios",
+                    "AuthService/loginSupport: Dados de login inválidos"
+                );
+            }
+
+            if (data.login === loginMaster && ivMaster !== undefined) {
+                if (passwordMaster !== undefined) {
+                    const decryptedPassword = decrypt(passwordMaster, ivMaster);
+                    if (data.password !== decryptedPassword) {
+                        return AppResponse.error(
+                            "Dados de login inválidos",
+                            "AuthService/loginSupport: Senha mestre não corresponde"
+                        );
+                    }
+                } else {
+                    return AppResponse.error(
+                        "Dados de login inválidos",
+                        "AuthService/loginSupport: Senha mestre não encontrada"
+                    );
+                }
+            } else {
+                const user: AppResponse = await UserModel.getUserByLogin(data.login);
+                if (!user.status) {
+                    return AppResponse.error(
+                        user.msg,
+                        user.error || "AuthService/loginSupport: Usuário não encontrado"
+                    );
+                }
+
+                if (!user.data.iv) {
+                    return AppResponse.error(
+                        "Não foi possível realizar o login",
+                        "AuthService/loginSupport: IV não encontrado"
+                    );
+                }
+
+                if (!user.data.password) {
+                    return AppResponse.error(
+                        "Não foi possível realizar o login",
+                        "AuthService/loginSupport: Senha não encontrada"
+                    );
+                }
+
+                const decryptedPassword = decrypt(user.data.password, user.data.iv);
+                if (data.password !== decryptedPassword) {
+                    return AppResponse.error(
+                        "Dados de login inválidos",
+                        "AuthService/loginSupport: Senha não corresponde"
+                    );
+                }
+            }
+
+            return AppResponse.success("Login de suporte realizado com sucesso");
+        } catch (error) {
+            return AppResponse.error(
+                "Erro ao realizar login de suporte",
+                `AuthService/loginSupport: ${error instanceof Error ? error.message : "Erro desconhecido"}`
             );
         }
     }

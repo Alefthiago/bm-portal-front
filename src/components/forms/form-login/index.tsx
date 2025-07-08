@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/input-otp";
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -35,7 +34,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import Image from "next/image";
 import { Loader2, Send } from "lucide-react";
-import { set, z } from "zod";
+import { z } from "zod";
 import { signIn } from "next-auth/react";
 import { useAlert } from "@/components/alert-provider";
 //      UTIL.        //
@@ -165,19 +164,6 @@ export function LoginForm({
             const data = await response.json();
             setIsLoadingBtn(false);
             setIsOpenModal(true);
-            // const signInResponse = await signIn("credentials", {
-            //     redirect: false,
-            //     phone: values.phone,
-            // });
-
-            // if (signInResponse?.error) {
-            //     console.error("Login não realizado:", signInResponse.error);
-            //     showAlert("error", "Erro ao realizar autenticar", "Verifique suas credenciais e tente novamente.");
-            //     setIsLoadingBtn(false);
-            //     return;
-            // }
-
-            // router.push("/");
         } catch (error) {
             console.error("Erro ao realizar login:", error);
             showAlert("error", "Erro ao realizar autenticar", "Tenta realizar o login manualmente");
@@ -188,7 +174,7 @@ export function LoginForm({
     async function handleOtpSubmit() {
         setOtpIsLoading(true);
         setOtpError("");
-        
+
         try {
             let otpValue = otp.replace(/\D/g, "");
             let otpLength = otpValue.length;
@@ -198,10 +184,10 @@ export function LoginForm({
                 return;
             }
 
-            let documento: string = form.getValues("cnpj");
+            let document: string = form.getValues("cnpj");
             let phone: string = form.getValues("phone");
 
-            const response = await fetch("/api/auth/login?phone=" + phone.replace(/\D/g, "") + "&document=" + documento.replace(/\D/g, "") + "&otp=" + otpValue, {
+            const response = await fetch("/api/auth/login?phone=" + phone.replace(/\D/g, "") + "&document=" + document.replace(/\D/g, "") + "&otp=" + otpValue, {
                 method: "GET"
             });
 
@@ -226,34 +212,30 @@ export function LoginForm({
             }
 
             const data = await response.json();
-            // const signInResponse = await signIn("credentials", {
-            //     redirect: false,
-            //     phone: values.phone,
-            // });
+            const signInResponse = await signIn("credentials", {
+                redirect: false,
+                phone: phone,
+                document: document
+            });
 
-            // if (signInResponse?.error) {
-            //     console.error("Login não realizado:", signInResponse.error);
-            //     showAlert("error", "Erro ao realizar autenticar", "Verifique suas credenciais e tente novamente.");
-            //     setIsLoadingBtn(false);
-            //     return;
-            // }
+            if (signInResponse?.error) {
+                console.error("Login não realizado:", signInResponse.error);
+                setOtpError("Erro ao realizar autenticar, Tente novamente");
+                setOtpIsLoading(false);
+                return;
+            }
 
-            // router.push("/");
-            setOtpIsLoading(false);
-            // setIsOpenModal(false);
-            // router.push("/");
+            router.push("/");
         } catch (error) {
             console.error("Erro ao enviar OTP:", error);
-            setOtpError("Erro ao enviar o código. Tente novamente.");
+            setOtpError("Erro ao enviar o código. Tente novamente");
             setOtpIsLoading(false);
         }
     }
 
     const handleChange = (value: string) => {
         setOtp(value);
-        console.log("OTP atual:", value);
     };
-
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>

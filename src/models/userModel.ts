@@ -67,7 +67,10 @@ export default class UserModel {
             });
 
             if (!user) {
-                return AppResponse.error("Usuário não encontrado", "UserModel/getUserByLogin: Usuário não existe");
+                return AppResponse.error(
+                    "Usuário não encontrado",
+                    "UserModel/getUserByLogin: Usuário não existe"
+                );
             }
 
             return AppResponse.success("Usuário encontrado", user);

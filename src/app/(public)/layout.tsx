@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 
 //      COMPONENTS.     //
 import { Copyright } from "lucide-react";
+import FormLoginSupport from "@/components/forms/form-login-suport";
 import SocialMedia from "@/components/ui/social-media";
 import { ModeToggle } from "@/components/mode-toggle";
 //     /COMPONENTS.     //
@@ -31,6 +32,7 @@ export default function AuthLayout({
                         <Copyright className="inline w-4 h-4 mr-1" />
                         2025 BM Informática Ltda
                     </div>
+                    <FormLoginSupport />
                 </div>
             </section>
         </main >

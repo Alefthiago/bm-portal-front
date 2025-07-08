@@ -1,4 +1,4 @@
-//      UTIL.       //
+ //      UTIL.       //
 import { formDataToObject } from "@/utils/form";
 import { set } from "zod";
 import { LoginUserDTO } from "@/dtos/user.dto";
@@ -82,7 +82,7 @@ export async function GET(request: Request) {
         }
 
         return NextResponse.json({
-            msg: "Número de WhatsApp validado com sucesso"
+            msg: "Código valido com sucesso"
         }, { status: 200 });
     } catch (error) {
         return NextResponse.json({
