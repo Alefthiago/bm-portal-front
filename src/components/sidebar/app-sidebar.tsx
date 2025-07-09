@@ -1,4 +1,3 @@
-"use client"
 //   /UTILS.    //
 import * as React from "react";
 import { NavMain } from "@/components/sidebar/nav-main";

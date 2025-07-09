@@ -24,7 +24,7 @@ export async function POST(request: Request) {
             }, { status: 422 });
         }
         //      /VALIDAÇÃO DE DADOS DO USUÁRIO PARA LOGIN DE SUPORTE.        //        
-        
+
         const userExists = await AuthService.LoginSupport(data);
         if (!userExists.status) {
             return NextResponse.json({

@@ -205,22 +205,30 @@ export function LoginForm({
                 } else {
                     let errorText = await response.text();
                     console.error("Erro ao criar conta:", errorText);
-                    setOtpError("Tente novamente mais tarde ou entre em contato com o suporte");
+                    setOtpError("Houve enivar código de confirmação, tente novamente mais tarde ou entre em contato com o suporte");
                 }
                 setOtpIsLoading(false);
                 return;
             }
 
             const data = await response.json();
-            const signInResponse = await signIn("credentials", {
-                redirect: false,
-                phone: phone,
-                document: document
-            });
+            try {
+                const signInResponse = await signIn("credentials", {
+                    redirect: false,
+                    login: phone,
+                    document: document,
+                    type: "client",
+                });
 
-            if (signInResponse?.error) {
-                console.error("Login não realizado:", signInResponse.error);
-                setOtpError("Erro ao realizar autenticar, Tente novamente");
+                if (signInResponse?.error) {
+                    console.error("Login não realizado:", signInResponse.error);
+                    setOtpError("Erro ao realizar autenticar, tente novamente ou entre em contato com o suporte");
+                    setOtpIsLoading(false);
+                    return;
+                }
+            } catch (error) {
+                console.error("Erro ao realizar login:", error);
+                setOtpError("Erro ao realizar autenticar, tente novamente ou entre em contato com o suporte");
                 setOtpIsLoading(false);
                 return;
             }

@@ -3,7 +3,6 @@
 import { AlertCircleIcon, CheckCircle2Icon, PopcornIcon } from "lucide-react";
 import {
     Alert,
-    AlertDescription,
     AlertTitle,
 } from "@/components/ui/alert";
 import { useState, useEffect, use } from "react";
@@ -26,7 +25,8 @@ import {
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogHeader,
-    AlertDialogTitle
+    AlertDialogTitle,
+    AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
 import { Loader2, Send, Headset, XCircle } from "lucide-react";
 import { set, z } from "zod";
@@ -45,6 +45,7 @@ export default function FormLoginSupport() {
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [isLoadingBtn, setIsLoadingBtn] = useState(false);
     const [alertForm, setAlertForm] = useState("");
+    const router = useRouter();
 
 
     useEffect(() => {
@@ -85,37 +86,52 @@ export default function FormLoginSupport() {
         data.append("password", form.getValues("password"));
 
         try {
-            const response = await fetch("/api/auth/loginSup", {
-                method: "POST",
-                body: data,
+            // const response = await fetch("/api/auth/loginSup", {
+            //     method: "POST",
+            //     body: data,
+            // });
+
+            // if (!response.ok) {
+            //     let contentType = response.headers.get("content-type");
+            //     if (contentType && contentType.includes("application/json")) {
+            //         let errorData = await response.json();
+            //         console.error("Erro ao criar conta:", errorData);
+            //         if (errorData.issues) {
+            //             let issues = errorData.issues.map((issue: any) => issue.message).join("<br/>");
+            //             setAlertForm(issues);
+            //         } else {
+            //             setAlertForm(errorData.msg || "Houve um erro inesperado ao realizar login, tente novamente mais tarde ou entre em contato com o suporte");
+            //         }
+            //     } else {
+            //         let errorText = await response.text();
+            //         console.error("Erro ao criar conta:", errorText);
+            //         setAlertForm("Houve um erro inesperado ao realizar login, tente novamente mais tarde ou entre em contato com o suporte");
+            //     }
+            //     setIsLoadingBtn(false);
+            //     return;
+            // }
+
+            // const responseData = await response.json();
+            const signInResponse = await signIn("credentials", {
+                redirect: false,
+                login: form.getValues("login"),
+                password: form.getValues("password"),
+                type: "employee"
             });
 
-            if (!response.ok) {
-                let contentType = response.headers.get("content-type");
-                if (contentType && contentType.includes("application/json")) {
-                    let errorData = await response.json();
-                    console.error("Erro ao criar conta:", errorData);
-                    if (errorData.issues) {
-                        let issues = errorData.issues.map((issue: any) => issue.message).join("<br/>");
-                        setAlertForm(issues);
-                    } else {
-                        setAlertForm(errorData.msg || "Houve um erro inesperado ao realizar login, tente novamente mais tarde ou entre em contato com o suporte");
-                    }
-                } else {
-                    let errorText = await response.text();
-                    console.error("Erro ao criar conta:", errorText);
-                    setAlertForm("Houve um erro inesperado ao realizar login, tente novamente mais tarde ou entre em contato com o suporte");
-                }
+            if (signInResponse?.error) {
+                console.error("Erro ao realizar login:", signInResponse.error);
+                setAlertForm("Dados inválidos, verifique seu login e senha e tente novamente");
                 setIsLoadingBtn(false);
-                return;
+                return false;
             }
-            const responseData = await response.json();
-            console.log("Resposta da API:", responseData);
-            setIsLoadingBtn(false);
+
+            router.push("/");
         } catch (error) {
             setIsLoadingBtn(false);
             console.error("Erro ao criar conta:", error);
             setAlertForm("Houve um erro inesperado ao realizar login, tente novamente mais tarde ou entre em contato com o suporte");
+            return false;
         }
     }
 
@@ -123,7 +139,9 @@ export default function FormLoginSupport() {
         <div>
             <AlertDialog open={isOpenModal} onOpenChange={setIsOpenModal}>
                 <AlertDialogContent className="max-w-md">
-                    <AlertDialogCancel className="absolute top-2 right-2 bg-transparent border-none p-1 rounded-full hover:bg-muted transition-colors cursor-pointer">
+                    <AlertDialogCancel
+                        className="absolute top-2 right-2 bg-transparent border-none p-1 rounded-full hover:bg-muted transition-colors cursor-pointer"
+                    >
                         <XCircle className="w-6 h-6" />
                     </AlertDialogCancel>
 
@@ -131,12 +149,15 @@ export default function FormLoginSupport() {
                         <AlertDialogTitle className="text-xl font-bold">
                             Realize o Login
                         </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Informe seu login e senha para acessar o sistema.
+                        </AlertDialogDescription>
                     </AlertDialogHeader>
 
                     <div className="flex flex-col items-center">
-                        {alertForm !== "" && (
-                            <Alert variant="destructive">
-                                <AlertCircleIcon />
+                        {alertForm && (
+                            <Alert variant="destructive" className="w-full">
+                                <AlertCircleIcon className="mr-2" />
                                 <AlertTitle>{alertForm}</AlertTitle>
                             </Alert>
                         )}
@@ -167,6 +188,7 @@ export default function FormLoginSupport() {
                                                 </FormItem>
                                             )}
                                         />
+
                                         <FormField
                                             control={form.control}
                                             name="password"
@@ -185,6 +207,7 @@ export default function FormLoginSupport() {
                                                 </FormItem>
                                             )}
                                         />
+
                                         <Button
                                             type="submit"
                                             className="w-full"
@@ -197,17 +220,6 @@ export default function FormLoginSupport() {
                                             )}
                                             Entrar
                                         </Button>
-                                        {/* <div className="text-center text-sm text-muted-foreground">
-                                            Esqueceu a senha?
-                                            <br />
-                                            <Link
-                                                href="https://wa.me/558131262050"
-                                                target="_blank"
-                                                className="underline underline-offset-4"
-                                            >
-                                                Clique aqui
-                                            </Link>
-                                        </div> */}
                                     </form>
                                 </Form>
                             </CardContent>

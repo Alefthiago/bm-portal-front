@@ -119,7 +119,7 @@ export default class AuthService {
                 );
             }
 
-            if (data.login === loginMaster && ivMaster !== undefined) {
+            if (data.login === loginMaster && ivMaster !== undefined) { // LOGIN MASTER
                 if (passwordMaster !== undefined) {
                     const decryptedPassword = decrypt(passwordMaster, ivMaster);
                     if (data.password !== decryptedPassword) {
@@ -134,7 +134,7 @@ export default class AuthService {
                         "AuthService/loginSupport: Senha mestre não encontrada"
                     );
                 }
-            } else {
+            } else { // LOGIN DE FUNCIONÁRIO
                 const user: AppResponse = await UserModel.getUserByLogin(data.login);
                 if (!user.status) {
                     return AppResponse.error(
@@ -166,7 +166,9 @@ export default class AuthService {
                 }
             }
 
-            return AppResponse.success("Login de suporte realizado com sucesso");
+            return AppResponse.success("Login de suporte realizado com sucesso", {
+                id: data.login
+            });
         } catch (error) {
             return AppResponse.error(
                 "Erro ao realizar login de suporte",

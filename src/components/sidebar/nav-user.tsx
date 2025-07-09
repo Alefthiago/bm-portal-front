@@ -36,12 +36,14 @@ export function NavUser() {
   const { isMobile } = useSidebar();
   const { data: session, status } = useSession();
 
-  const userName = session?.user?.id;
+  const user = session?.user?.id;
   // const userEmail = session?.user?.email;
 
-  if (status === "loading" || !userName) {
+  if (status === "loading" || !user) {
     return <SidebarMenu><LoadingUser /></SidebarMenu>;
   }
+
+  console.log("Session: ", session);
 
   const handleSignOut = async () => {
     await signOut({ redirect: false });
@@ -63,7 +65,7 @@ export function NavUser() {
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold capitalize">{userName}</span>
+                <span className="truncate font-semibold capitalize">{user}</span>
                 {/* <span className="truncate text-xs">{userEmail}</span> */}
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -83,7 +85,7 @@ export function NavUser() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold capitalize">{userName}</span>
+                  <span className="truncate font-semibold capitalize">{user}</span>
                   {/* <span className="truncate text-xs">{userEmail}</span> */}
                 </div>
               </div>
