@@ -36,10 +36,9 @@ export function NavUser() {
   const { isMobile } = useSidebar();
   const { data: session, status } = useSession();
 
-  const user = session?.user?.id;
-  // const userEmail = session?.user?.email;
+  const nameOrPhone = session?.user?.id;
 
-  if (status === "loading" || !user) {
+  if (status === "loading" || !nameOrPhone) {
     return <SidebarMenu><LoadingUser /></SidebarMenu>;
   }
 
@@ -65,8 +64,7 @@ export function NavUser() {
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold capitalize">{user}</span>
-                {/* <span className="truncate text-xs">{userEmail}</span> */}
+                <span className="truncate font-semibold capitalize">{nameOrPhone}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -85,18 +83,19 @@ export function NavUser() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold capitalize">{user}</span>
-                  {/* <span className="truncate text-xs">{userEmail}</span> */}
+                  <span className="truncate font-semibold capitalize">{nameOrPhone}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem className="cursor-pointer">
-                <UserCog2Icon />
-                Conta
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
+            {session?.user?.type !== "client" && (
+              <DropdownMenuGroup>
+                <DropdownMenuItem className="cursor-pointer">
+                  <UserCog2Icon />
+                  Conta
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            )}
             <DropdownMenuItem onClick={() => handleSignOut()} className="cursor-pointer">
               <LogOut />
               Sair

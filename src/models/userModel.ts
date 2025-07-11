@@ -12,7 +12,6 @@ export default class UserModel {
                 data: {
                     login: data.login.trim().toLowerCase() as string,
                     name: data.name.trim().toLowerCase() as string,
-                    email: data.email.trim().toLowerCase() as string,
                     phone: data.phone.replace(/\D/g, "") as string,
                     password: passwordHashed.encryptedData as string,
                     iv: passwordHashed.iv as string
@@ -44,40 +43,62 @@ export default class UserModel {
         }
     }
 
-    static async verifyEmailExist(email: string): Promise<AppResponse> {
+    static async getUserForLogin(login: string): Promise<AppResponse> {
         try {
             const user = await prisma.user.findFirst({
-                select: { id: true },
-                where: { email }
-            });
-
-            return AppResponse.success("Email verificado com sucesso", !!user);
-        } catch (error) {
-            return AppResponse.error(
-                "Erro ao verificar email",
-                `UserModel/verifyEmailExist: ${error instanceof Error ? error.message : "Erro desconhecido"}`
-            );
-        }
-    }
-
-    static async getUserByLogin(login: string): Promise<AppResponse> {
-        try {
-            const user = await prisma.user.findFirst({
+                select: {
+                    id: true,
+                    login: true,
+                    name: true,
+                    uf: true,
+                    phone: true,
+                    password: true,
+                    iv: true,
+                    role: {
+                        select: {
+                            name: true,
+                            permissions: {
+                                select: {
+                                    permission: {
+                                        select: {
+                                            name: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 where: { login }
             });
 
             if (!user) {
                 return AppResponse.error(
                     "Usuário não encontrado",
-                    "UserModel/getUserByLogin: Usuário não existe"
+                    "UserModel/getUserForLogin: Usuário não existe"
                 );
             }
 
-            return AppResponse.success("Usuário encontrado", user);
+            const userSession = {
+                login: user.login,
+                name: user.name,
+                uf: user.uf,
+                phone: user.phone,
+                iv: user.iv,
+                password: user.password,
+                accessLevel: user.role ? {
+                    name: user.role.name,
+                    permissions: user.role.permissions.map((p) => (
+                        p.permission.name
+                    ))
+                } : null
+            };
+
+            return AppResponse.success("Usuário encontrado", userSession);
         } catch (error) {
             return AppResponse.error(
                 "Erro ao buscar usuário",
-                `UserModel/getUserByLogin: ${error instanceof Error ? error.message : "Erro desconhecido"}`
+                `UserModel/getUserForLogin: ${error instanceof Error ? error.message : "Erro desconhecido"}`
             );
         }
     }

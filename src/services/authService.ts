@@ -119,56 +119,30 @@ export default class AuthService {
                 );
             }
 
-            if (data.login === loginMaster && ivMaster !== undefined) { // LOGIN MASTER
-                if (passwordMaster !== undefined) {
-                    const decryptedPassword = decrypt(passwordMaster, ivMaster);
-                    if (data.password !== decryptedPassword) {
-                        return AppResponse.error(
-                            "Dados de login inválidos",
-                            "AuthService/loginSupport: Senha mestre não corresponde"
-                        );
-                    }
-                } else {
-                    return AppResponse.error(
-                        "Dados de login inválidos",
-                        "AuthService/loginSupport: Senha mestre não encontrada"
-                    );
-                }
-            } else { // LOGIN DE FUNCIONÁRIO
-                const user: AppResponse = await UserModel.getUserByLogin(data.login);
-                if (!user.status) {
-                    return AppResponse.error(
-                        user.msg,
-                        user.error || "AuthService/loginSupport: Usuário não encontrado"
-                    );
-                }
-
-                if (!user.data.iv) {
-                    return AppResponse.error(
-                        "Não foi possível realizar o login",
-                        "AuthService/loginSupport: IV não encontrado"
-                    );
-                }
-
-                if (!user.data.password) {
-                    return AppResponse.error(
-                        "Não foi possível realizar o login",
-                        "AuthService/loginSupport: Senha não encontrada"
-                    );
-                }
-
-                const decryptedPassword = decrypt(user.data.password, user.data.iv);
-                if (data.password !== decryptedPassword) {
-                    return AppResponse.error(
-                        "Dados de login inválidos",
-                        "AuthService/loginSupport: Senha não corresponde"
-                    );
-                }
+            const user: AppResponse = await UserModel.getUserForLogin(data.login);
+            if (!user.status) {
+                return AppResponse.error(
+                    user.msg,
+                    user.error || "AuthService/loginSupport: Usuário não encontrado"
+                );
+            }
+            
+            if (!user.data.login || !user.data.uf || !user.data.accessLevel) {
+                return AppResponse.error(
+                    "Não foi possível realizar o login",
+                    `AuthService/loginSupport: Dados de usuário incompletos (${JSON.stringify(user.data)})`
+                );
             }
 
-            return AppResponse.success("Login de suporte realizado com sucesso", {
-                id: data.login
-            });
+            const decryptedPassword = decrypt(user.data.password, user.data.iv);
+            if (data.password !== decryptedPassword) {
+                return AppResponse.error(
+                    "Dados de login inválidos",
+                    "AuthService/loginSupport: Senha não corresponde"
+                );
+            }
+
+            return AppResponse.success("Login de suporte realizado com sucesso", user.data);
         } catch (error) {
             return AppResponse.error(
                 "Erro ao realizar login de suporte",

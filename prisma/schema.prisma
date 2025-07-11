@@ -14,25 +14,53 @@ datasource db {
 }
 
 model user {
-  id          Int      @id @default(autoincrement())
-  email       String   @unique
-  uf          String?   
+  id       Int          @id @default(autoincrement())
+  name     String
+  login    String       @unique
+  password String
+  iv       String
+  role     accessLevel? @relation(fields: [roleId], references: [id])
+  roleId   Int?
 
-  phone       String   @unique
-  cnpj        String?  
+  phone String? @unique
+  uf    String?
 
-  name        String
-  login       String   @unique
-  password    String
-  
-  confirmPend Boolean  @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deletedBy Int?
+}
 
-  iv          String
-  role        String    @default("employee")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
-  deletedBy   Int?
+model accessLevel {
+  id          Int                     @id @default(autoincrement())
+  name        String                  @unique
+  users       user[] // Usuários que pertencem a este nível
+  permissions accessLevelPermission[] // Permissões associadas
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model permission {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  accessLevels accessLevelPermission[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+}
+
+model accessLevelPermission {
+  accessLevelId Int
+  permissionId  Int
+
+  accessLevel accessLevel @relation(fields: [accessLevelId], references: [id])
+  permission  permission  @relation(fields: [permissionId], references: [id])
+
+  @@id([accessLevelId, permissionId])
 }
 
 model navMain {
@@ -61,7 +89,7 @@ model navSub {
   parent   navSub?  @relation("SubSubRelation", fields: [parentId], references: [id])
   children navSub[] @relation("SubSubRelation")
 
-  posts      post[]
+  posts post[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

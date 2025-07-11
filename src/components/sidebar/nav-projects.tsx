@@ -7,6 +7,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import {
+  Wrench
+} from "lucide-react";
 
 const projects = [
   {
@@ -26,7 +29,10 @@ const projects = [
 export function NavProjects() {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Útil</SidebarGroupLabel>
+      <SidebarGroupLabel>
+        <Wrench className="mr-2 h-4 w-4" />
+        Útil
+      </SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
