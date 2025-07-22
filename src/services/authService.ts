@@ -1,12 +1,5 @@
 const apiUrlGeneteToken = process.env.API_URL_GENETE_TOKEN;
 const apiUrlValidateToken = process.env.API_URL_VALIDATE_TOKEN;
-const loginMaster = process.env.LOGIN_MASTER;
-const passwordMaster = process.env.PASSWORD_MASTER;
-const ivMaster = process.env.IV_MASTER;
-if (!apiUrlGeneteToken || !apiUrlValidateToken || !loginMaster || !passwordMaster || !ivMaster) {
-    throw new Error("Variáveis de ambiente não estão definidas");
-}
-
 //      UTIL.      //
 import UserModel from "@/models/userModel";
 import AppResponse from "@/utils/appResponse";

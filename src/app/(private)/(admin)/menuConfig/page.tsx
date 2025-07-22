@@ -7,8 +7,6 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import {
     Breadcrumb,
@@ -23,10 +21,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
-
-
-import DataTabelComponent from "@/components/tables/data-tables";
+import { ResponsiveTable } from "@/components/tables/data-tables";
+import { ModalAddMenu } from "@/components/modals/modal-add-menu";
 
 //     /UTILS.      //
 
@@ -88,18 +84,11 @@ export default async function MenuConfigPage() {
                         <h1 className="text-2xl font-semibold text-gray-800 capitalize lg:text-3xl dark:text-white">
                             Configuração de Menus
                         </h1>
-
-                        <Button
-                            title="Adicionar novo menu"
-                            className="cursor-pointer w-fit"
-                        >
-                            <PlusIcon className="w-4 h-4" />
-                            Adicionar
-                        </Button>
+                        <ModalAddMenu />
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <DataTabelComponent />
+                    <ResponsiveTable />
                 </CardContent>
             </Card>
         </section>
