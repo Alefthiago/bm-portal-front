@@ -4,7 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import { LoginSupportDTO } from "@/dtos/user.dto";
 import AuthService from "@/services/authService";
 import AppResponse from "@/utils/appResponse";
-import { use } from "react";
+import { isEmptyString } from "@/utils/functions";
 //   /UTIL.   //
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -13,19 +13,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       login: {},
       password: {},
       document: {},
-      type: {},
     },
     authorize: async (credentials) => {
       if (!credentials) return null;
 
-      if (credentials.type === "client") {
+      if (!isEmptyString(credentials.document)) { // LOGIN PARA CLIENTES
         if (!credentials?.login || !credentials?.document) return null;
         return {
           id: credentials.login.toString().replace(/\D/g, ""),
           document: credentials.document.toString().replace(/\D/g, ""),
-          type: credentials.type,
+          type: "client",
         }
-      } else {
+      } else { // LOGIN PARA FUNCIONARIOS
         const data: Record<string, string> = {
           login: credentials.login as string,
           password: credentials.password as string

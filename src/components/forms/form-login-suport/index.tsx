@@ -1,11 +1,10 @@
-"use client";
 //      UTIL.        //
-import { AlertCircleIcon, CheckCircle2Icon, PopcornIcon } from "lucide-react";
+import { AlertCircleIcon } from "lucide-react";
 import {
     Alert,
     AlertTitle,
 } from "@/components/ui/alert";
-import { useState, useEffect, use } from "react";
+import { useState } from "react";
 import { useRouter } from 'next/navigation';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -28,10 +27,9 @@ import {
     AlertDialogTitle,
     AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
-import { Loader2, Send, Headset, XCircle } from "lucide-react";
-import { set, z } from "zod";
+import { Loader2, Send, XCircle } from "lucide-react";
+import { z } from "zod";
 import { signIn } from "next-auth/react";
-import { useAlert } from "@/components/alert-provider";
 //     /UTIL.        //
 
 //      Valudação do form.       //
@@ -41,24 +39,17 @@ const formSchema = z.object({
 });
 //     /Valudação do form.       //
 
-export default function FormLoginSupport() {
-    const [isOpenModal, setIsOpenModal] = useState(false);
+//      INTERFACE.      //
+interface FormLoginSupportProps{
+    isOpenModal: boolean;
+    setIsOpenModal?: React.Dispatch<React.SetStateAction<boolean>>;
+};
+//     /INTERFACE.      //
+export default function FormLoginSupport({isOpenModal, setIsOpenModal}: FormLoginSupportProps) {
     const [isLoadingBtn, setIsLoadingBtn] = useState(false);
     const [alertForm, setAlertForm] = useState("");
     const router = useRouter();
 
-
-    useEffect(() => {
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.ctrlKey && event.altKey && event.key.toLowerCase() === "s") {
-                event.preventDefault()
-                setIsOpenModal(true)
-            }
-        }
-
-        window.addEventListener("keydown", handleKeyDown)
-        return () => window.removeEventListener("keydown", handleKeyDown)
-    }, []);
 
     const handleLoginBlur = async (
         e: React.FocusEvent<HTMLInputElement>,
@@ -86,37 +77,10 @@ export default function FormLoginSupport() {
         data.append("password", form.getValues("password"));
 
         try {
-            // const response = await fetch("/api/auth/loginSup", {
-            //     method: "POST",
-            //     body: data,
-            // });
-
-            // if (!response.ok) {
-            //     let contentType = response.headers.get("content-type");
-            //     if (contentType && contentType.includes("application/json")) {
-            //         let errorData = await response.json();
-            //         console.error("Erro ao criar conta:", errorData);
-            //         if (errorData.issues) {
-            //             let issues = errorData.issues.map((issue: any) => issue.message).join("<br/>");
-            //             setAlertForm(issues);
-            //         } else {
-            //             setAlertForm(errorData.msg || "Houve um erro inesperado ao realizar login, tente novamente mais tarde ou entre em contato com o suporte");
-            //         }
-            //     } else {
-            //         let errorText = await response.text();
-            //         console.error("Erro ao criar conta:", errorText);
-            //         setAlertForm("Houve um erro inesperado ao realizar login, tente novamente mais tarde ou entre em contato com o suporte");
-            //     }
-            //     setIsLoadingBtn(false);
-            //     return;
-            // }
-
-            // const responseData = await response.json();
             const signInResponse = await signIn("credentials", {
                 redirect: false,
                 login: form.getValues("login"),
                 password: form.getValues("password"),
-                type: "employee"
             });
 
             if (signInResponse?.error) {

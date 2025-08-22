@@ -6,6 +6,14 @@ import { useRouter } from 'next/navigation';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
+import { z } from "zod";
+import { signIn } from "next-auth/react";
+import { useAlert } from "@/components/alert-provider";
+//      UTIL.        //
+
+//      COMPONENTES.        //
+import { Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -32,12 +40,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import Image from "next/image";
-import { Loader2, Send } from "lucide-react";
-import { z } from "zod";
-import { signIn } from "next-auth/react";
-import { useAlert } from "@/components/alert-provider";
-//      UTIL.        //
+//      COMPONENTES.        //
 
 //      Validações do form.     //
 const formSchema = z.object({
@@ -107,10 +110,7 @@ function isValidCNPJ(cnpj: string): boolean {
 }
 //     /FUNÇÕES DE VALIDAÇÃO DE DOCUMENTOS     //
 
-export function LoginForm({
-    className,
-    ...props
-}: React.ComponentProps<"div">) {
+export function LoginForm() {
     const router = useRouter();
     const [isLoadingBtn, setIsLoadingBtn] = useState<boolean>(false);
     const { showAlert } = useAlert();
@@ -217,7 +217,6 @@ export function LoginForm({
                     redirect: false,
                     login: phone,
                     document: document,
-                    type: "client",
                 });
 
                 if (signInResponse?.error) {
@@ -246,7 +245,7 @@ export function LoginForm({
     };
 
     return (
-        <div className={cn("flex flex-col gap-6", className)} {...props}>
+        <div className={cn("flex flex-col gap-6")}>
             <Card className="overflow-hidden p-0">
                 <CardContent className="grid p-0 md:grid-cols-2">
                     <Form {...form}>
@@ -265,11 +264,11 @@ export function LoginForm({
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>
-                                                    WhatsApp</FormLabel>
+                                                    WhatsApp
+                                                </FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         maxLength={15}
-                                                        autoComplete="off"
                                                         placeholder="(00) 0 0000-0000"
                                                         {...field}
                                                         onChange={(e) => {
@@ -302,7 +301,6 @@ export function LoginForm({
                                                     <Input
                                                         placeholder="CNPJ/CFP da Empresa"
                                                         maxLength={18}
-                                                        autoComplete="off"
                                                         {...field}
                                                         onChange={(e) => {
                                                             let raw = e.target.value.replace(/\D/g, "");

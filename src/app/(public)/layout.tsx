@@ -2,13 +2,6 @@
 import type { Metadata } from "next";
 //     /UTIL.       //
 
-//      COMPONENTS.     //
-import { Copyright } from "lucide-react";
-import FormLoginSupport from "@/components/forms/form-login-suport";
-import SocialMedia from "@/components/ui/social-media";
-import { ModeToggle } from "@/components/mode-toggle";
-//     /COMPONENTS.     //
-
 //      META.       //
 export const metadata: Metadata = {
     title: 'BM Portal',
@@ -25,15 +18,6 @@ export default function AuthLayout({
         <main className="flex min-h-svh flex-col items-center justify-center p-6 md:p-10">
             <section className="w-full max-w-sm md:max-w-3xl mt-8">
                 {children}
-                <div className="text-muted-foreground text-center text-xs text-balance mt-4">
-                    <ModeToggle />
-                    <SocialMedia />
-                    <div className="hover:underline cursor-pointer mt-2">
-                        <Copyright className="inline w-4 h-4 mr-1" />
-                        2025 BM Informática Ltda
-                    </div>
-                    <FormLoginSupport />
-                </div>
             </section>
         </main >
     );

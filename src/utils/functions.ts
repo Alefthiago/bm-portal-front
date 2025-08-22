@@ -46,3 +46,7 @@ export function isValidCNPJ(cnpj: string): boolean {
     result = sum % 11 < 2 ? 0 : 11 - (sum % 11);
     return result === parseInt(digits.charAt(1));
 }
+
+export function isEmptyString(value: unknown): boolean {
+  return typeof value !== "string" || value.trim().length === 0;
+}
