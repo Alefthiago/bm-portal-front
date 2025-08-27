@@ -50,7 +50,6 @@ export default function FormLoginSupport({isOpenModal, setIsOpenModal}: FormLogi
     const [alertForm, setAlertForm] = useState("");
     const router = useRouter();
 
-
     const handleLoginBlur = async (
         e: React.FocusEvent<HTMLInputElement>,
         originalOnBlur: (...event: any[]) => void

@@ -1,16 +1,17 @@
-import { PlusIcon } from "lucide-react"
+
+//      COMPONENTES.        //
+import { PlusIcon, XCircle } from "lucide-react";
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import FormMenu from "@/components/forms/form-add-menu";
+//     /COMPONENTES.        //
 
 export function ModalAddMenu() {
     return (
@@ -25,17 +26,17 @@ export function ModalAddMenu() {
                 </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
+                <AlertDialogCancel
+                    className="absolute top-2 right-2 bg-transparent border-none p-1 rounded-full hover:bg-muted transition-colors cursor-pointer"
+                >
+                    <XCircle className="w-6 h-6" />
+                </AlertDialogCancel>
+
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete your
-                        account and remove your data from our servers.
-                    </AlertDialogDescription>
+                    <AlertDialogTitle>Adicionar Menu</AlertDialogTitle>
                 </AlertDialogHeader>
-                <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction>Continue</AlertDialogAction>
-                </AlertDialogFooter>
+
+                <FormMenu />
             </AlertDialogContent>
         </AlertDialog>
     )

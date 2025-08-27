@@ -1,6 +1,9 @@
-//      UTILS.      //
+//      UTIL.       //
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+//     /UTIL.       //
+
+//      COMPONENTES.        //
 import {
     Card,
     CardContent,
@@ -21,19 +24,19 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ResponsiveTable } from "@/components/tables/data-tables";
+import { DataTablesCustom } from "@/components/tables/data-tables";
 import { ModalAddMenu } from "@/components/modals/modal-add-menu";
+//     /COMPONENTES.        //
 
-//     /UTILS.      //
 
-export default async function MenuConfigPage() {
+
+export default async function MenuConfigMainPage() {
     const session = await auth();
     const user = session?.user;
 
     if (!user?.permissions?.includes("view_menu")) {
         redirect("/");
     }
-
     return (
         <section className="flex flex-col gap-4">
             <Breadcrumb>
@@ -55,10 +58,27 @@ export default async function MenuConfigPage() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="start">
                                 <DropdownMenuItem>
-                                    <Link href="/menuConfig">
-                                        Menu
-                                    </Link>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger className="flex items-center gap-1">
+                                            <Link href="#">
+                                                Menu
+                                            </Link>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="start">
+                                            <DropdownMenuItem>
+                                                <Link href="/menuConfig/main">
+                                                    Primário
+                                                </Link>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                                <Link href="/menuConfig/sub">
+                                                    Secundário
+                                                </Link>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </DropdownMenuItem>
+
                                 <DropdownMenuItem>
                                     <Link href="/menuConfig/permissions">
                                         Usuários
@@ -69,9 +89,31 @@ export default async function MenuConfigPage() {
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger className="flex items-center gap-1">
+                                <Link href="#">
+                                    Menu
+                                </Link>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start">
+                                <DropdownMenuItem>
+                                    <Link href="/menuConfig/main">
+                                        Primário
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <Link href="/menuConfig/permissions">
+                                        Secundário
+                                    </Link>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
                         <BreadcrumbLink asChild>
-                            <Link href="#">
-                                Menu
+                            <Link href="/menuConfig/main">
+                                Primário
                             </Link>
                         </BreadcrumbLink>
                     </BreadcrumbItem>
@@ -88,9 +130,10 @@ export default async function MenuConfigPage() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <ResponsiveTable />
+                    <DataTablesCustom />
                 </CardContent>
             </Card>
+
         </section>
     );
-};
+}
